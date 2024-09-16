@@ -1,7 +1,161 @@
 use std::io;
+use std::mem::size_of_val;
 
 fn main() {
+
+}
+
+fn _diferent_ways_to_modify_a_string() {
+    let mut string = String::from("hello");
+    string.push(',');
+    string.push_str("world");
+    string += "!";
+
+    string = string.replace("world", "wardo");
     
+    let not_a_string_but_a_string_slice = "!!!";
+    let not_str = String::from("!!!");
+
+    string = string + not_a_string_but_a_string_slice + not_str.as_str() + &not_str; // only &str can be concatenated to String
+
+    println!("{} {}", string, string.len());
+}
+
+fn _you_may_make_multiple_references_to_the_same_variable_if_ownership_is_transferred() {
+    let mut s = String::from("hello");
+    let r1 = &mut s;
+    r1.push_str(" world");
+    let r2 = &mut s; // takes over the ownership 
+    r2.push_str("!");
+
+    //r1.push_str("!"); you shall not use the abandoned variable
+}
+
+fn _can_borrow_mut_as_let_but_not_vice_versa(){
+    let x: String = String::from("new");
+    let mut _y: String = String::from("other");
+    let z = &_y;
+    //let mut w = &mut y;    
+
+    println!("{} {}", *z, x);
+}
+
+fn _print_the_pointer() {
+    let x: i32 = 5;
+    let p = &x;
+    println!("them memory adress is{:p}", p);
+}
+
+fn _if_one_node_in_a_tuple_looses_the_custedy_it_doesnt_invalidate_the_other_members_of_the_tyuple() {
+    let x: (String, String) = (String::from("hello"), String::from("world"));
+    let _s = x.0;
+
+    println!("{:?}", x.1);
+}
+
+fn _structs_are_like_custom_types() {
+
+    #[derive(Debug)]
+    struct Person {
+        name: String,
+        age: Box<i32>,
+    }
+
+    let person_instance: Person = Person {
+        name: String::from("Megatron"),
+        age: Box::new(21),
+    };
+
+    // get the values of the struct as normal variables
+    let Person { name, ref age } = person_instance; // this does so we cannot use the person_instance
+
+    println!("{} is {}, these are atributes of a person", name, age);
+}
+
+fn _using_heaped_variables_that_are_normally_on_the_stack() {
+    let x: Box<i32> = Box::new(5); // assigns a value to heap and makes the variable a pointer
+    let mut y: Box<i32> = Box::new(4);
+
+    *y = 6; // access the value not the pinter using *
+
+    assert_eq!(*x, 5);
+}
+
+fn _string_that_can_be_copied() {
+    let _x: (i32, i32, (), String) = (1, 2, (), String::from("hello")); // cannot be copied as String is not copyable
+    let y: (i32, i32, (), &str) = (1, 2, (), "hello"); // &str can be copied as it is imutable
+    let _z = y;
+    println!("Success");
+}
+
+fn _use_methods_taht_dont_consume_the_variables() {
+    fn give_ownership() -> String {
+        let s: String = String::from("hello");
+        // s.into_bytes(); this would consume the string
+        let _s = s.as_bytes(); // this just consumes a reference
+        s
+    }
+
+    let s = give_ownership();
+    println!("s is {}", s);
+}
+
+fn _assing_variables_value_to_another_variable() {
+    let x:String = String::from("hello");
+    let y:String = x.clone();
+
+    // if we want to use x after assigning its value to another variable we have to clone it
+    println!("{} {}", x,y);
+}
+
+fn _ownership_demonstrated() {
+    let x: String = String::from("hello");
+
+    fn takes_ownership(some_string: String) {
+        println!("some_string is {}", some_string);
+    }
+
+    takes_ownership(x);
+    // x is not valid here anymore unless it is returned and reassigned
+}
+
+fn _never_returns() -> ! {
+    panic!("This function never returns");
+    //unimplemented!("This function never returns");
+    //todo!("This function never returns");
+}
+
+fn _declarations_are_expressions() {
+    let v:i32 = {
+        let mut x = 1;
+        x += 1; // a variable assignment is an expression just like a declaration
+        x
+    };
+
+    print!("{}", v);
+}
+
+fn _a_variable_may_be_calculated_as_long_as_the_scope_returns_an_expression() {
+    let x:u32 = 5_u32;
+    let y = {
+        let x_squared = x * x;
+        let x_cube = x_squared * x;
+        
+        // y will be assigned to this
+        x_cube + x_squared + x //; would make this an expression which cannot be returned by a function
+    };
+    
+    println!("y is: {}", y);
+}
+
+fn _default_return_type() -> () {
+    println!("unit type has size zero bytes")
+}
+
+fn _all_chars_have_a_size_of_4_bytes() {
+    let c1:char = 'a';
+    assert_eq!(size_of_val(&c1), 4);
+    println!("Success");
 }
 
 fn _individual_bit_operations_that_move_bit_values_in_byte_words() {

@@ -92,8 +92,31 @@ this is like import in js, ruby and python
 you cannot do operations with parameters of diferent types if something expects something I expect you have to explicitly change that using the "as" keyword becouse rust is strongly typed and lacks inheritance.
 
 ## Expressions vs statements
-Statements cannot be returned by functions in rust so no variable definitions or 
+Statements are instructions that does not return a value like an if or fn. Expressions result in a value. A function in rust may not return a statement.
 
 
+## Ownership "a concept exclusive to rust"
+- Each value in rust has an owner which is the variable or data structure thet holds it and is responsible for allocating and freeing up memoryused to store the data
+- There can only be one owner at a time
+- The value is dropped when the owner goes out of scope
 
+## Stack vs heap
+Stack is super fast and ooperates on first in first out principles like a stakck of pancakes you eat what whas made most recently, primitive data types like chars and ints as well as function declarations are stored in the stack. The heap is like an object as it holds values in memory accesible through an adress. Variables related to the heap are for example the string as a string variable does not realy hold the string values but rather its adress on the heap.
 
+### Copy vs Move when a value is assigned
+In scalar values such as ints and chars if you assign a variable the value of another the value is copied in the stack as it is comparatively cheap. Dynamicallys sized data on the other hand will get moved as copying is to expensive. This means that the pointer will be copied by a variable assigned to another so if you do something with the data it will affect them both. This is forbidden by the second ownership rule in rust "there can be only one owner of a value" so rust will drop the first assignee. You can explicitly copy dynamically sized variables with the clone variable.
+
+## Borrowing
+- Temporarily access the data without taking ownership of it
+- take a reference "pointer" towards the data not the thing in itself
+- you can ither have one mutable reference or many imutable references at a time, not both
+- If you transferr ownership, aka dont use the reference again you may make another &mut
+
+## Compound types
+
+### String vs &str
+- String is mutable, owns its contents and lives in the heap
+- &str is immutable and does not own its underlying data
+- use &str if you just want to view the string otherwise use String
+
+###
