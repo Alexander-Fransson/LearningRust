@@ -2,7 +2,127 @@ use std::io;
 use std::mem::size_of_val;
 
 fn main() {
+    
+}
 
+fn _printable_struct() {
+    #[derive(Debug)]
+    struct Printable {
+        print: String,
+        me: String,
+    }
+
+    let i = Printable {
+        print: String::from("hello"),
+        me: String::from("world"),
+    };
+    dbg!(&i); // prints to error
+    println!("{:?}", i) // to print out things with the debug trait use {:?}
+}
+
+fn _tuple_struct_shenanigans() {
+    struct Rgb(u8,u8,u8);
+    let rgb = Rgb(255,255,255);
+
+    fn show_color(color: &Rgb) {
+        println!("{} {} {}", color.0, color.1, color.2);
+    }
+
+    show_color(&rgb);
+
+    println!("{} {} {}", rgb.0, rgb.1, rgb.2);
+}
+
+fn _struct_shenanigans() {
+    struct Humunculus {
+        status: String,
+        number: i32,
+    }
+
+    let mut i:Humunculus = Humunculus {
+        status: String::from("alive"),
+        number: 5,
+    };
+
+    i.number += 1;
+
+    fn build_humunculus(status: String, number: i32) -> Humunculus {
+        Humunculus {
+            status,
+            number,
+        }
+    }
+
+    let mut dave = build_humunculus(String::from("dead"), 2);
+    dave.status = "alive".to_string();
+
+    
+
+    println!("{} {} {}", i.status, i.number, dave.status);
+}
+
+fn _tuple_shenanigans2_electric_boogaloo() {
+    let t:(i32, f32, char) = (5, 3.14, 'c');
+    let (x , y, z) = t;
+    println!("{} {} {}", x, y, z);
+
+    // another way to declare them
+    let (a, b, c);
+    (a,b,c) = (1,2,3);
+    println!("{} {} {}", a, b, c);
+}
+
+fn _slice_shenanigans() {
+    let arr = [1, 2, 3, 4, 5];
+    let slice: &[i32] = &arr[1..3];
+    let _first_two = &arr[..2];
+    assert!(slice.len() == 2);
+}
+
+fn _if_you_want_an_array_of_a_single_number() {
+    let _a = [1; 100];
+}
+
+fn _array_shenanigans() {
+    let a:[i32;5] = [1, 2, 3, 4, 5];
+    let _inferred = ['a','b'];
+    let less_inferred: [_; 2] = ['a','b'];
+    assert!(a.len() == 5);
+
+    fn calculate_memsize_of_char_array(array:&[char;2]) -> usize {
+        array.len() * size_of_val(&array[0])
+    }
+
+    assert!(size_of_val(&less_inferred) == calculate_memsize_of_char_array(&less_inferred));
+    println!("{}", a[0]);
+}
+
+fn _iterates_through_string() {
+    let s = String::from("hello");
+    for c in s.chars() {
+        println!("{}", c);
+    }
+}
+
+fn _access_pars_of_string() {
+    let s = String::from("hello");
+    let hello = &s[0..5];
+    let world = &s[6..11];
+    // index does not work in rust, use slices instead
+    let _just_h: &str = &s[0..1]; // in js it would be s[0]
+    println!("{} {}", hello, world);    }
+
+fn _raw_strings_dont_care_about_backslashes() {
+    let raw_str = r"Escapes don't work here! \n";
+    println!("{}", raw_str);
+}
+
+fn _two_ways_to_make_a_string() {
+    let sliced: &str = "hello";
+    let string = &sliced.to_string();
+    let other_way_to_make_a_string = String::from(sliced);
+
+    println!("{} {} {} two ways to make a string", sliced, string, other_way_to_make_a_string);
 }
 
 fn _diferent_ways_to_modify_a_string() {

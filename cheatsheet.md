@@ -118,5 +118,35 @@ In scalar values such as ints and chars if you assign a variable the value of an
 - String is mutable, owns its contents and lives in the heap
 - &str is immutable and does not own its underlying data
 - use &str if you just want to view the string otherwise use String
+- a reference to a String can be implicitly converted to &str by the compiler
 
-###
+### Arrays
+- fixed size collections of the same data type stored as a contigous block in stack memory
+- signofied by [T; Length] and can nither grow nor shrink
+- array length cannot be set by code as it must be seen at compile time
+- index like normal, out of bound index will cause compiler panic
+
+### Slices
+- reference to contigous sequence of elements in a collection
+- provides a way to borrow a part of the collection without taking ownership
+- can be created from arrays, vectors and Strings and other collections implementing a Dref trait
+- becouse slices size is not known at compile time we have to use a & pointer when defining
+- as a slice contains a pointers that is a two word characters it is 8 bytes larger than an array of the same size
+
+### Tuples
+- a way to strore related values of diferent types in a single variable
+- stored on the stack a fixed size contigous value
+- tuples can be nested
+- members can be extracted through indexong tup.0
+- tuples can be used and returned by functions
+
+### Structs
+- custom types
+- compound data types allowing you to group data together into named structures
+- similar to tuples but each value is accessed through a name instead of the index
+- have to be instantiated with data like classes that lack inheritance
+- instances fields can be accessed and mutated provided they are mut
+- you can not make individual fields mutable in a struct just all or nothing
+- functions can instantiate and return structs
+- you can copy the data of a struct instance by Struct {..instance} like ... in ts
+- if a variable gains ownership of a struct parameter the struct as a whole cannot be accessed just like its parameter that lost custedy of its value
