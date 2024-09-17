@@ -150,3 +150,41 @@ In scalar values such as ints and chars if you assign a variable the value of an
 - functions can instantiate and return structs
 - you can copy the data of a struct instance by Struct {..instance} like ... in ts
 - if a variable gains ownership of a struct parameter the struct as a whole cannot be accessed just like its parameter that lost custedy of its value
+
+### Enums
+- a custom type that can have only one of a possible number of values
+- we can only access one variant of an enum at a time,
+- they can contain extra information using tuples
+- enums cannot have float values
+- can be converted to ints type by as
+- an option in an enum is called a descriminator
+
+### The Option Enum
+- An enum that represents a value that may or may not be present
+- The rust alternative to null
+
+## Flow Control
+- normal flow of a program is line by line top to bottom
+- concepts include conditionals like if/else and match in adition to loops like for and while
+- continues and breaks are also included under this concept
+- the only new concept is continue which hops to the next looping in a loop
+- loop is just an infinite while loop that has to be manually broken out of.
+
+## Pattern matching
+- compare a value to diferent patterns and then execute code based on diferent patterns
+- all possible cases must be handled
+- if let is a match that handles a non value
+- if conditionals dont allow for type based pattern matching so you have to use matches!
+- you can also use else if let but that is even more varbose than match
+- in an if let/ match statements variables are destructured so Some(30) -> 30, shadowing
+- | can be used to match multiple patterns and ..= can be used to match a range
+- the @ operator can be used to extract a variable and test it at the same time in a match
+- you can access and modify a mutable reference in a match clause
+
+## Methods
+- a function that is associated with a particular type of struct
+- you put it into the struct using an impl block
+- you can access the values of the struct by an &self keyword
+- a method that does not take self as its first parameter is called an associated function
+- associated functions are often used as constructors for structs
+- one struct can have many impl blocks

@@ -2,7 +2,230 @@ use std::io;
 use std::mem::size_of_val;
 
 fn main() {
+}
+
+fn _methods_in_enums() {
+    enum Foo {
+        Bar,
+        Poo(String)
+    }
+    impl Foo {
+        fn _new() -> Self {
+            Self::Bar
+        }
+
+        fn _set_poo(&mut self, value: String) {
+            if let Self::Bar = self {
+                *self = Self::Poo(value);
+            }
+        }
+    }
+}
+
+fn _method_shenanigans() {
+    struct Rectangle {
+        width: u32,
+        height: u32
+    }
+
+    impl Rectangle {
+        pub fn _new(width: u32, height: u32) -> Self {
+            Self {width, height} // Self could be Rectangle
+        }
+
+        pub fn _area(&self) -> u32 {
+            self.width * self.height
+        }
+
+        pub fn _widen(&mut self, amount: u32) {
+            self.width += amount // can be used to change the value of the struct
+        }
+    }
+
+    let mut rect = Rectangle::_new(100, 200); // called on the type not on an instance
+    rect._widen(100);
+    assert_eq!(rect._area(), 300);
+    println!("Success");
+}
+
+fn _match_first_and_last_values_of_tuple() {
+    let tuple = (1, 2, 3);
+    match tuple {
+        (first, .., last) => println!("first = {}, last = {}", first, last),
+    }
+}
+
+fn _match_guards() {
+    let x = Some(5);
+    let aditional_requirement_to_match = 10;
+    // put in extra requirement in match
+    match x {
+        Some(50) => println!("Got 50"),
+        Some(y) if aditional_requirement_to_match == y => println!("Matched, y = {:?}", y),
+        _ => println!("Default case, x = {:?}", x),
+    }
+}
+
+fn _at_match_explained() {
+    struct Point {
+        x: i32,
+        y: i32
+    }
+
+    let p: Point = Point {x: 0, y: 0};
+
+    match p {
+        Point {x, y:1} => println!("{} we get x through a variable byt not y", x),
+        Point {x, y:y @ 0} => println!("Now we can both get and mesure y {} {}", x, y),
+        Point {x:x @ 0..=10, y:y @ (21|22)} => println!("{} is between 0 and 10 and {} is 21 or 22", x, y),
+        _ => ()
+    }
+}
+
+fn _matches_macro() {
+    let alphabet = ['a', 'b', 'c'];
+    for letter in alphabet {
+        assert!(matches!(letter, 'a'..='z' | 'A'..='Z'));
+    }
+}
+
+fn _if_let_explained() {
+    let x = Some(5);
+
+    match &x {
+        Some(val) => println!("{}", val),
+        None => ()
+    }
+    // is the same as
+
+    if let Some(val) = &x {
+        println!("{}", val);
+    }
+
+}
+
+fn _nested_loop_loops_needs_to_be_labled() {
+    let mut i = 0;
+    'outer: loop {
+        let mut j = 0;
+        'inner1:loop { 
+            println!("i is {}, j is {}", i, j);
+            j += 1;
+            if j == 5 {
+                break 'inner1;
+            }
+        }
+
+        'inner2: loop {
+            println!("i is {}, j is {}", i, j);
+            break 'inner2;
+        }
+
+        i += 1;
+        if i == 5 {
+            break 'outer;
+        }
+    }
+}
+
+fn _loops_can_also_be_used_to_assign_variables() {
+    let mut i = 0;
+    let _j = loop { // will loop forever untill manually break
+        println!("i is {}", i);
+        i += 1;
+
+        if i == 5 {
+            break i;
+        }
+    };
+}
+
+fn _for_with_index() {
+    for (i, j) in (5..10).enumerate() {
+        println!("{} {}", i, j);
+    }
+}
+
+fn _if_else_can_be_used_when_assigning_variables() {
+    let n = 32;
+    let depends_on_n = if n < 2 {5} else {7};
+    println!("{}", depends_on_n);
+}
+
+fn _options_enum() {
+    // a type that can be either Some of anything or None
+
+    fn plus_one(x: Option<i32>) -> Option<i32> {
+        match x {
+            None => None,
+            Some(i) => Some(i + 1),
+        }
+    }
     
+    let five: Option<i32> = Some(5);
+    let six: Option<i32> = plus_one(five);
+    let _none: Option<i32> = plus_one(None);
+
+    if let Some(n) = six {
+        println!("six is {}", n);
+    }
+    
+}
+
+fn _enum_in_array() {
+    #[derive(Debug)]
+    enum Message {
+        Title(String),
+        Length(i32),
+        BackgroundColor(u8, u8, u8),
+    }
+
+    let messages: [Message; 3] = [
+        Message::Title(String::from("hello")),
+        Message::Length(5),
+        Message::BackgroundColor(255, 255, 255),
+    ];
+
+    for message in messages {
+        println!("{:?}", message);
+    }
+}
+
+fn _instantiate_enum() {
+
+    #[derive(Debug)]
+    enum Hero {
+        Name(String),
+        Move {x: i32,y: i32,},
+        ChangeColor(u8, u8, u8),
+        GiveUp,
+    }
+
+    let action1 = Hero::Name("Sandy".to_string());
+    let action2: Hero = Hero::GiveUp;
+    println!("{:?}", action1);
+    println!("{:?}", action2);
+
+    let moovement = Hero::Move {x: 1, y: 1};
+    if let Hero::Move { x:a, y:b } = moovement {
+        // a way to get the values but it seams overly complex
+        assert_eq!(a, b)
+    }
+}
+
+fn _enum_shenanigans() {
+    enum ShoeSize {
+        Small, // implicitly this has a value of 0
+        Middle, // 1
+        Large, // 2
+    }
+
+    enum Number {
+        First = 8, // cannot be 8.0 folat
+        Second, // 9 implicitly follows the pattern
+    }
+
+    assert_eq!(8, Number::First as i32);
 }
 
 fn _printable_struct() {
