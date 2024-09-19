@@ -1,7 +1,138 @@
 use std::io;
 use std::mem::size_of_val;
 
+
 fn main() {
+}
+
+
+
+fn _implementations_requirement_in_function_parameters() {
+
+    fn multiply_any_type<T: std::ops::Mul<Output = T>>(a:T,b:T) -> T {
+        a * b
+    }
+
+    trait Summerize{
+        fn make_summary(&self) -> String {
+            let summary: &str = "this is a summary";
+            summary.to_string()
+        }
+    }
+
+    struct Essay {}
+
+    impl Summerize for Essay {}
+
+    fn needs_summary(summary: &impl Summerize) {
+        println!("{}", summary.make_summary());
+    }
+
+    let summary = Essay {};
+
+    needs_summary(&summary);
+}
+
+fn _derive_stuff(){
+    #[derive(Debug)] // quick implements the debug trait    
+    struct Point {
+        x: i32,
+        y: i32,
+    }
+
+    println!("{:?}", Point{x: 1, y: 2});
+}
+
+fn _trait_shenanigans(){
+    trait Greeting {
+        fn _say_hi(&self) -> String { // a default implementation that does not have to be implemented each time
+            let x = String::from("hello");
+            return x
+        }
+
+        fn _say_something(&self) -> String; // no default implementation so it has to be manually implemented
+    }
+
+    struct Sempai{}
+    struct Sensei{}
+
+    impl Greeting for Sempai {
+
+        fn _say_hi(&self) -> String {
+            return String::from("hiiiiiiiiiiiiiiiiii")
+        }
+
+        fn _say_something(&self) -> String {
+            return String::from("salam")
+        }
+    }
+
+    impl Greeting for Sensei {
+        fn _say_something(&self) -> String {
+            return String::from("salam")
+        }
+    }
+
+    println!("{} {}", Sempai{}._say_hi(), Sensei{}._say_something());
+}
+
+fn _const_generics() {
+    struct ConstArray<T, const N: usize> {
+        data: [T; N],
+    }
+
+    let _a = ConstArray::<i32, 10> { data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] };
+}
+
+fn _gnerics_in_methods() {
+    struct Point<T> {
+        x: T,
+    }
+    impl<T> Point<T> {
+        fn _get_x(&self) -> &T { 
+            &self.x
+        }
+    }
+}
+
+fn _multiple_generics_in_structs() {
+    struct Point<T,U> {
+        x: T,
+        y: U,
+    }
+
+    let _p: Point<i32,String> = Point{x: 1, y: String::from("hello")};
+}
+
+fn _generics_shenanigans() {
+    struct A;       // concrete type A
+    struct S(A);    // concrete type S, just takes an argument of type A
+    struct SGen<T>(T); // generic type SGen
+
+    fn regular_fn(_s:S) {}
+    fn generic_spec_i32_fn(_s: SGen<i32>) {}
+    fn gneeric_fn<T>(_s:SGen<T>) {}
+
+    fn use_functions() {
+        regular_fn(S(A));
+        gneeric_fn(SGen(A));
+        generic_spec_i32_fn(SGen(88));
+    }
+
+    // explicitly specify char to generic()
+    gneeric_fn::<char>(SGen('a')); // called turbo fish syntax
+
+    // implicitly specify i32 to generic()
+    gneeric_fn(SGen(32));
+
+    fn sum<T: std::ops::Add<Output = T>>(x: T, y: T) -> T {
+        x + y 
+    } // makes sure that T implements Add
+
+    sum(1,2);
+    sum(1.2,3.3);
+    sum(2_i8, 3_i8);
+
 }
 
 fn _methods_in_enums() {

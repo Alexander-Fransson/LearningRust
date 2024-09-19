@@ -188,3 +188,51 @@ In scalar values such as ints and chars if you assign a variable the value of an
 - a method that does not take self as its first parameter is called an associated function
 - associated functions are often used as constructors for structs
 - one struct can have many impl blocks
+
+## Generics
+- placeholders for concrete types
+- enables wrighting more reusable and flexible code
+- avoid duplicating code for diferent types
+- zero cost abstraction, rust compiler will fill it out to concrete types at compile time
+- a const generic is the ability to provide a constant value to a type f.ex if you were to make an array with a certain length a struct then you could provide a const generic to set the length.
+
+## Traits
+- set of methods that can be implemented for multiple types in order to provide common functionality between them
+- traits consist of method signatures that then have to be implemented by the target type
+- similar to classes in other languages
+- can be parameters in functions
+- can also be requirements for input types in function f.ex when a function that adds needs inputs that implement the Add trait
+- where clauses makes it easyer to implement many trait constraints on functions
+- you may also specify a trait implementation for the return type of a generic function
+
+### Derivable traits
+- fast traits like debug, clone and copy that can be automatically implemented by the compiler
+
+### Traiut Objects
+- using impl trait does not work when returning multiple types
+- this is becouse diferent types use diferent amounts of memory
+- a trait object is a pointer that implements the trait when the type can only be known on run
+- this works becouse a pointer always has the same size even at compile time
+
+#### Static dispatch
+- resolves method call at compile time, when types are known and clear
+- compiler generates function code for each concrete type that implements trait
+- calls each function based on concrete type
+- this way is faster and more efficient that dynamic dispatch but is less flexible
+
+#### Dynamic dispatch &dyn <- probably
+- Specific methods to be called are determined at runtime
+- uses &dyn or Box<dyn> to create pointers to trait object
+- compiler creates vtable in heap memory to store the pointers
+
+## & vs Box
+- box transferrs data to heap and owns it but & just points to a value that is already there
+- box can be passed across scopes while references has a limited lifetime
+- box can be pattern matched and cloned but references cannot
+
+## Associated types
+- Allows types to be associated with traits
+- concrete type needs to be specified
+- Is basically a placeholder type that the trait method can use in the signature
+- basically a more flexible generic type 
+- allows traits to have diferent associated types for diferent implementing types
