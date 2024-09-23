@@ -205,6 +205,13 @@ In scalar values such as ints and chars if you assign a variable the value of an
 - where clauses makes it easyer to implement many trait constraints on functions
 - you may also specify a trait implementation for the return type of a generic function
 
+### Associated types
+- Allows types to be associated with traits
+- concrete type needs to be specified
+- Is basically a placeholder type that the trait method can use in the signature
+- basically a more flexible generic type 
+- allows traits to have diferent associated types for diferent implementing types
+
 ### Derivable traits
 - fast traits like debug, clone and copy that can be automatically implemented by the compiler
 
@@ -225,14 +232,78 @@ In scalar values such as ints and chars if you assign a variable the value of an
 - uses &dyn or Box<dyn> to create pointers to trait object
 - compiler creates vtable in heap memory to store the pointers
 
+### Object safe traits
+- you can only make object safe traits into trait objects
+- traits are object safe when there are no generic type parameters
+- object safe traits also cannot have return type Self
+
 ## & vs Box
 - box transferrs data to heap and owns it but & just points to a value that is already there
 - box can be passed across scopes while references has a limited lifetime
 - box can be pattern matched and cloned but references cannot
 
-## Associated types
-- Allows types to be associated with traits
-- concrete type needs to be specified
-- Is basically a placeholder type that the trait method can use in the signature
-- basically a more flexible generic type 
-- allows traits to have diferent associated types for diferent implementing types
+## Capacity
+- strings stored on the heap has a capacity of 8 with the power of 2*n 
+- if the string is mutated so that it needs more memory rust will double what is reserved for it
+- therefor it is good if you know how it behaves to manually assign the memory allocated to it
+- this can be done with the .with_capacity(num) function
+
+## Vectors
+- Like arrays but dynamically sized
+- allocated on the heap as contigous block of memory, like string of any type
+- all elements must be of same type
+- special macro vec![]
+- String = vec!<u8>
+
+## Hashmap
+- data structure to store key value pairs
+- Allocated on the heap, and dynamically sized
+- efficient lokup, insertion and deletion of data
+- each key is hashed to a unique index in underlying array
+- capacities allocated to hashmaps is not exact, you can manually allocate and shringk but it wont be exact
+- for values implementing the copy trait like i32 the value will be copied into the hashmap
+- for owned values like String ownership will be transferred to the hashmap
+
+### Requirements of hashmap key
+- any type that implements the Eq and hash traits can be keys in a hashmap
+- You can include bool, ints and strings by default but not floats
+- all collection classes will implement hash if their contained T does it
+- so Vec!<i32> would but Vec!<f32> would not.
+
+## Type coercion "as" keyword
+- If a value out of range is typecast to something that cannot handle it the rust compiler will subtract the largest value allowed +1 *n ntill it fits the type.
+- so if 1000 were to be typecast "as" u8 256 would be subtracted untill it fits.
+- if negative is cast to something that cannot be negative it will turn around and be the largest possible. -1 as u8 will be 255.
+- floats typecast to ints will have their fractions removed.
+
+## From/Into conversions
+- from and into functions are a part of the standard library and can be used to simply convert types
+- if you implement from you automatically also get into
+- by defaut Strings can be converted to &str, bools can be ints, chars can be ints
+- from can be implemented without import
+- from can even be used to change the types of errors
+- try_from and try_into can be used when type conversion is not gauranteed
+
+## Error handling
+
+### Panic!
+- prints out an error message, unwinds the stack and exits the programm
+- in multithreded programms it will only exit its own thread
+- simplest way of error handling
+
+#### Common panic cases
+* non equal assertion in assert_eq!
+* trying to access an array out of bounds 
+* unwrap a non value
+* trying to make an intiger to large
+* dividing by zero
+
+### Result
+- an enum that represents the outcome of an operation that could potentially fail
+- two possible variants, OK and Err
+- the unwrap() function takes a result and panicks in the case of error or returning whats in ok
+- ? operator is basically the same as unwrap but returns an error message instad of panicing
+
+## type alias
+- if you write type on global scope you can rename default types
+- dont confuse with associated types in traits
