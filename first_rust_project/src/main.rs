@@ -1,6 +1,3 @@
-use core::hash;
-
-
 fn main() {
     
 }
@@ -315,3 +312,19 @@ fn _question_mark_operator() {
 
     assert_eq!(multiply_with_strings("10", "2"), Ok(20));
 }
+
+fn _map_example() {
+    use std::num::ParseIntError;
+
+    fn add_two_to_string_number(num: &str) -> Result<i32, ParseIntError> {
+        // map is similar to that in ts
+        num.parse::<i32>().map(|n| n+2)
+    }
+
+    // and_then needs to return a result
+    fn add_three_to_string_number(num: &str) -> Result<i32, ParseIntError> {
+        // map is similar to that in ts
+        num.parse::<i32>().and_then(|n| Ok(n+2))
+    }
+}
+

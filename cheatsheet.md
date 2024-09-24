@@ -307,3 +307,24 @@ In scalar values such as ints and chars if you assign a variable the value of an
 ## type alias
 - if you write type on global scope you can rename default types
 - dont confuse with associated types in traits
+- are useful when your types are repeatedly nested and complex
+
+## More about Cargo
+- official package manager and building tool
+- a crate is a compilation unit of rust source code, cargo manages crates
+- cates.io is the repository for rust packages
+- binary crates are basically programms that you can run
+- library crates are what they sound like
+- the crate root is the source file that is run, src/main.rs, src/lib.rs
+
+## Modules
+- a way of organizing code by grouping related items
+- can be imported using namespaces
+- also controles privacy of functions structs, enums and so on
+- create a lib by 'cargo new package_name_you_find_in_Cargo.toml_file --lib' from src directory
+- a package can contain as many binary crates as you want but only one library crate
+- usually you put package binary crates in a bin folder in src
+- you create binary crates by just adding mor main files
+- to separate a module to another file just declare the module name in the lib or main and then make a separate rs file with the name of the module declared and the contennts of the module, you dont have to write mod {} again as it is already declared
+- alternatively you can create a folder with the name of the module containing a mod.rs file that the becomes the source of the sub crate.
+- sub crates can contain further sub crates
