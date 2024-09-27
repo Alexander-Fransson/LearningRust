@@ -286,6 +286,11 @@ In scalar values such as ints and chars if you assign a variable the value of an
 
 ## Error handling
 
+### Derive and debug
+- to display your type implement debug through derive and then use {?:} to print it
+- if you want it ti be formatted rittier you can use {:#?}
+- using derive you can customize the parts of what you want to print out
+
 ### Panic!
 - prints out an error message, unwinds the stack and exits the programm
 - in multithreded programms it will only exit its own thread
@@ -328,3 +333,62 @@ In scalar values such as ints and chars if you assign a variable the value of an
 - to separate a module to another file just declare the module name in the lib or main and then make a separate rs file with the name of the module declared and the contennts of the module, you dont have to write mod {} again as it is already declared
 - alternatively you can create a folder with the name of the module containing a mod.rs file that the becomes the source of the sub crate.
 - sub crates can contain further sub crates
+
+## Lifetimes
+- the scope where references are valid
+- often inferred implicitly
+- prevents dangling pointers
+- a reference to a value must never outlive the value itself, a dangeling reference
+- constraints of lifetimes in function signatures include that any reference must have an annotated lifetime and that any reference rewturned must have the same lifetime as one of the inputs or be static.
+- when you annotate a lifetime to a function you state that the parameter will live at least as long as the function.
+- if you declare a variable and return a reference to it from a function it will be invalid becouse the source is out of scope.
+- string literals have a static lifetime and therefor they are valid throughout the entire program
+
+### Elision
+- the compiler uses three rules to figure out lifetimes that are not explicitly annotated
+- compiler assigne a lifetime parameter to each parameter that is a reference
+- if there is exactly one input parameter its lifetime is assigned to all output parameters
+- if there are multiple input parameters but one of them is &self or &mut self that is the lifetime that is assigbed
+
+### Static lifetime
+- refers to a lifetime that last during the entire duration of the programs execution
+- any reference witha 'static lifetime can be safely used through the entire program
+- can be coerced to a shorter lifetime if needed
+- string literals have a defalt lifetime of static
+- const's also have a static lifetime
+
+## Closures
+- anonymous functions that are able to capture values from the scope in whihch they are defined
+- can be defined inline for example as function parameters
+- dont require type annotations
+- can take ownership of a value by using the move keyword
+- like arrow functions in js and lambda functions in python
+
+## Fn Traits
+- traits that define the signature of closures and functions
+- describes types, number of arguments and return type
+- three diferent traits
+- compiler chooses thr trait that is the least testrictive possible by default
+- functions can also be inputs to other functions not just closures
+
+### FnOnce
+- closure that can be called once
+- takes ownership of captured values
+- functions with this trait can only be used once
+
+### FnMut
+- might mutate captured values
+- can be called more than once
+
+### Fn
+- does not take ownership of captured values
+- does'nt mutatte anything
+- might not even capture anything from its environment
+
+## Iterators
+- allows to perform taks on sequence of items in turn
+- iterators are lazy meaning that they have no effect untill they are used by a method
+- all iterators implement the Iterator trait which has the next() function that is called when traversing some data.
+- some methods consume the iterator while others produce a new iterator from the one provided
+- into_iter consumes it while just iter does not, iter_mut even allows for modification of org
+- map is an example of a function that turns an iterator into another iterator 

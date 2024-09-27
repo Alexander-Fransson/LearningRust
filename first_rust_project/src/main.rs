@@ -328,3 +328,37 @@ fn _map_example() {
     }
 }
 
+fn _lifetime_example() {
+    let x = String::from("hello");
+
+    fn parameter_must_outlive_function<'a>(x: &'a String) -> &'a str {
+        x.as_str()
+    }
+
+    println!("{}", parameter_must_outlive_function(&x));
+}
+
+fn _closure_shenanigans() {
+    let x = 5;
+    let y = |z| x + z;
+    assert_eq!(y(10), 15);
+
+    let value_to_be_moved = 32;
+    let closure = move || {
+        println!("{} is moved", value_to_be_moved);
+    };
+    closure();
+    // closure cannot be run again as the value it relies on has been moved into the instance
+}
+
+fn _function_with_function_input() {
+    fn function() {
+        println!("hello");
+    }
+
+    fn run_function<F:Fn()>(f: F) {
+        f();
+    }
+
+    run_function(function);
+}
