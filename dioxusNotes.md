@@ -4,7 +4,6 @@ to install dioxus
 cargo install dioxus-cli
 ```
 
-
 ```sh
 dx new
 ```
