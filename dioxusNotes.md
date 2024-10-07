@@ -1,4 +1,4 @@
-to install dioxus
+## to install dioxus
 
 ```sh
 cargo install dioxus-cli
@@ -7,3 +7,7 @@ cargo install dioxus-cli
 ```sh
 dx new
 ```
+## rules of hooks
+1. hooks may only be used in components or other hooks
+2. on every call to the component function the same hooks must be called and in the same order so hooks cannot be used in conditionals, closures or loops
+3. hooks names shoul start with use_

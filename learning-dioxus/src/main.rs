@@ -1,6 +1,67 @@
 use dioxus::prelude::*; // for element and stuff
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use futures::future::join_all;
+
+pub static BASE_API_URL: &str = "https://hacker-news.firebaseio.com/v0/";
+pub static ITEM_API: &str = "item/";
+pub static USER_API: &str = "user/";
+const COMMENT_DEPTH: i8 = 2;
+
+pub async fn get_story_preview(id: i64) -> Result<StoryItem, reqwest::Error> {
+    let url = format!("{BASE_API_URL}{ITEM_API}{id}.json");
+    return reqwest::get(url).await?.json().await;
+}
+
+pub async fn get_stories(count:usize) -> Result<Vec<StoryItem>, reqwest::Error> {
+    let url = format!("{BASE_API_URL}topstories.json");
+    let stories_ids = &reqwest::get(&url).await?.json::<Vec<i64>>().await?[..count];
+
+    let story_futures = stories_ids[..usize::min(stories_ids.len(), count)]
+        .iter()
+        .map(|&story_id| get_story_preview(story_id));
+    let stories = join_all(story_futures)
+        .await
+        .into_iter()
+        .filter_map(|story| story.ok())
+        .collect();
+    Ok(stories)
+}
+
+pub async fn get_story(id:i64) -> Result<StoryPageData, reqwest::Error> {
+    let url = format!("{BASE_API_URL}{ITEM_API}{id}.json");
+    let mut story = reqwest::get(&url).await?.json::<StoryPageData>().await?;
+    let comment_futures = story.item.kids.iter().map(|&id| get_comment(id));
+    let comments = join_all(comment_futures)
+        .await
+        .into_iter()
+        .filter_map(|comment| comment.ok())
+        .collect();
+    story.comments = comments;
+    Ok(story)
+}
+
+pub async fn get_comment_with_depth(comment_id: i64, depth: i8) -> Result<Comment, reqwest::Error> {
+    let url = format!("{BASE_API_URL}{ITEM_API}{comment_id}.json");
+    let mut comment = reqwest::get(&url).await?.json::<Comment>().await?;
+    if depth > 0 {
+        let sub_comment_futures = comment
+            .kids
+            .iter()
+            .map(|story_id| get_comment_with_depth(*story_id, depth - 1));
+        comment.sub_comments = join_all(sub_comment_futures)
+            .await
+            .into_iter()
+            .filter_map(|comment| comment.ok())
+            .collect();
+    }
+    Ok(comment)
+}
+
+pub async fn get_comment(comment_id: i64) -> Result<Comment, reqwest::Error> {
+    let comment = get_comment_with_depth(comment_id, COMMENT_DEPTH).await?;
+    Ok(comment)
+}
 
 //Define the hackernews type
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -81,21 +142,23 @@ pub fn App() -> Element {
 
 #[allow(non_snake_case)]
 fn Stories() -> Element {
-    rsx! {
-        StoryListing {
-            story: StoryItem {
-                id: 0,
-                title: "hello hackernews".to_string(),
-                url: None,
-                text: None,
-                by: "Author".to_string(),
-                score: 0,
-                descendants: 0,
-                time: chrono::Utc::now(),
-                kids: vec![],
-                r#type: "".to_string(),
+    // use_resource will 
+    let stories = use_resource(move|| get_stories(10));
+    
+    match &*stories.read_unchecked() {
+        Some(Ok(list)) => {
+            rsx!{
+                div {
+                    for story in list {
+                        StoryListing { story: story.clone() }
+                    }
+                }
             }
         }
+        Some(Err(err)) => {
+            rsx!{"An error occurred: {err}"}
+        }
+        None => { rsx!{"Loading..."} }
     }
 }
 
@@ -121,7 +184,6 @@ fn Preview() -> Element {
     }
 }
 
-#[allow(non_snake_case)]
 #[component]
 fn Comment(comment: Comment) -> Element {
     rsx!{
@@ -136,7 +198,6 @@ fn Comment(comment: Comment) -> Element {
     }
 }
 
-#[allow(non_snake_case)]
 #[component]
 pub fn StoryListing(story: ReadOnlySignal<StoryItem>) -> Element {
     let mut preview_state = consume_context::<Signal<PreviewState>>();
