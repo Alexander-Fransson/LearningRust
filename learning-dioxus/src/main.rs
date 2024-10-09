@@ -89,15 +89,18 @@ pub fn StoryListing(story: ReadOnlySignal<StoryItem>) -> Element {
         time,
         kids,
         url,
+        id,
         ..
-    } = &*story.read();
+    } = story();
+
+    let full_story = use_signal(|| None);
 
     let url = url.as_deref().unwrap_or_default();
     let hostname = url
         .trim_start_matches("https://")
         .trim_start_matches("http://")
         .trim_start_matches("www.");
-    let score = format!("{score} point{}", if *score == 1 {"s"} else {""}); // change string dependent on values
+    let score = format!("{score} point{}", if score == 1 {"s"} else {""}); // change string dependent on values
     let comments = format!(
         "{} {}",
         kids.len(),
@@ -109,23 +112,11 @@ pub fn StoryListing(story: ReadOnlySignal<StoryItem>) -> Element {
         div { 
             padding: "0.5rem", 
             position: "relative",
-            onmouseenter: move |_event| {
-                *preview_state
-                    .write() = PreviewState::Loaded(StoryPageData {
-                        item: story(),
-                        comments: vec![],
-                    });
-            },
+            onmouseenter: move |_event| { resolve_story(full_story, preview_state, id)},
             div { font_size: "1.5rem",
                 a { 
                     href: "{url}", 
-                    onfocus: move |_event| {
-                        *preview_state
-                            .write() = PreviewState::Loaded(StoryPageData {
-                            item: story(),
-                            comments: vec![],
-                        });
-                    }, 
+                    onfocus:  move |_event| { resolve_story(full_story, preview_state, id)}, 
                     "{title}" 
                 },
                 a {
