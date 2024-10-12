@@ -16,3 +16,6 @@ dx new
 #![allow(non_snake_case)]
 
 on top of page
+
+## Spawn
+you should use spawn when performing things not tied to the component life cycle
