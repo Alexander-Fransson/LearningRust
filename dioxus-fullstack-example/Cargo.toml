@@ -8,6 +8,8 @@ edition = "2021"
 
 [dependencies]
 serde = { version = "1.0.197", features = ["derive"] }
+tokio = {version = "1.40.0", features = ["time"]}
+http = "1.1.0"
 
 dioxus = { version = "0.5", features = ["fullstack"] }
 

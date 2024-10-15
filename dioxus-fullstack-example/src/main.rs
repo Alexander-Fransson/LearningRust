@@ -1,41 +1,38 @@
 #![allow(non_snake_case)]
 
 use dioxus::prelude::*;
-use dioxus_logger::tracing;
+use http::response;
+use serde::{Deserialize, Serialize};
+use std::time::Duration;
+//use dioxus_logger::tracing;
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+struct Request {
+    name: String,
+}
 
 fn main() {
     // Init logger
-    dioxus_logger::init(tracing::Level::INFO).expect("failed to init logger");
-    tracing::info!("starting app");
+    // dioxus_logger::init(tracing::Level::INFO).expect("failed to init logger");
+    // tracing::info!("starting app");
     launch(App);
 }
 
 fn App() -> Element {
-    // Build cool things ✌️
+    //let result = use_resource(get_data); // if you want to load in data fater the component renders
+    let result = use_server_future(|| get_data(Request {
+        name: "from client here".to_string()
+    }))?; // if you want the page to wait on the server
 
     rsx! {
-        link { rel: "stylesheet", href: "main.css" }
-        img { src: "header.svg", id: "header" }
-        div { id: "links",
-            a { href: "https://dioxuslabs.com/learn/0.5/", "📚 Learn Dioxus" }
-            a { href: "https://dioxuslabs.com/awesome", "🚀 Awesome Dioxus" }
-            a { href: "https://github.com/dioxus-community/", "📡 Community Libraries" }
-            a { href: "https://github.com/DioxusLabs/dioxus-std", "⚙️ Dioxus Standard Library" }
-            a { href: "https://marketplace.visualstudio.com/items?itemName=DioxusLabs.dioxus",
-                "💫 VSCode Extension"
-            }
-            a { href: "https://discord.gg/XgGxMSkvUM", "👋 Community Discord" }
-        }
+        p { "Server returned: {result.value():?}" }
     }
 }
 
-#[server(PostServerData)]
-async fn post_server_data(data: String) -> Result<(), ServerFnError> {
-    tracing::info!("Server received: {}", data);
-    Ok(())
-}
-
-#[server(GetServerData)]
-async fn get_server_data() -> Result<String, ServerFnError> {
-    Ok("Hello from the server!".to_string())
+#[server]
+async fn get_data(req:Request) -> Result<String, ServerFnError> {
+    let headers: http::HeaderMap = extract().await?;
+    tokio::time::sleep(Duration::from_secs(1)).await;
+    let response = format!("Hi form server {:?}, data {:?}", headers[http::header::USER_AGENT], req.name); 
+    Ok(response)
 }
