@@ -1,0 +1,9 @@
+/home/megatron/Documents/LearningRust/demo-ssr/target/debug/deps/libdioxus_core_macro-5ce54687e761d97e.so: /home/megatron/.cargo/registry/src/index.crates.io-6f17d22bba15001f/dioxus-core-macro-0.5.6/src/lib.rs /home/megatron/.cargo/registry/src/index.crates.io-6f17d22bba15001f/dioxus-core-macro-0.5.6/src/component.rs /home/megatron/.cargo/registry/src/index.crates.io-6f17d22bba15001f/dioxus-core-macro-0.5.6/src/props/mod.rs /home/megatron/.cargo/registry/src/index.crates.io-6f17d22bba15001f/dioxus-core-macro-0.5.6/src/utils.rs /home/megatron/.cargo/registry/src/index.crates.io-6f17d22bba15001f/dioxus-core-macro-0.5.6/src/../README.md
+
+/home/megatron/Documents/LearningRust/demo-ssr/target/debug/deps/dioxus_core_macro-5ce54687e761d97e.d: /home/megatron/.cargo/registry/src/index.crates.io-6f17d22bba15001f/dioxus-core-macro-0.5.6/src/lib.rs /home/megatron/.cargo/registry/src/index.crates.io-6f17d22bba15001f/dioxus-core-macro-0.5.6/src/component.rs /home/megatron/.cargo/registry/src/index.crates.io-6f17d22bba15001f/dioxus-core-macro-0.5.6/src/props/mod.rs /home/megatron/.cargo/registry/src/index.crates.io-6f17d22bba15001f/dioxus-core-macro-0.5.6/src/utils.rs /home/megatron/.cargo/registry/src/index.crates.io-6f17d22bba15001f/dioxus-core-macro-0.5.6/src/../README.md
+
+/home/megatron/.cargo/registry/src/index.crates.io-6f17d22bba15001f/dioxus-core-macro-0.5.6/src/lib.rs:
+/home/megatron/.cargo/registry/src/index.crates.io-6f17d22bba15001f/dioxus-core-macro-0.5.6/src/component.rs:
+/home/megatron/.cargo/registry/src/index.crates.io-6f17d22bba15001f/dioxus-core-macro-0.5.6/src/props/mod.rs:
+/home/megatron/.cargo/registry/src/index.crates.io-6f17d22bba15001f/dioxus-core-macro-0.5.6/src/utils.rs:
+/home/megatron/.cargo/registry/src/index.crates.io-6f17d22bba15001f/dioxus-core-macro-0.5.6/src/../README.md:
